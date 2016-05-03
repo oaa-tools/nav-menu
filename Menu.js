@@ -46,8 +46,7 @@ var Menu = function (menuNode, menuButton) {
 *   Add event listeners for 'keydown', 'click', 'blur' and 'focus' events
 */
 Menu.prototype.init = function () {
-  var menu = this, // for reference from within event handler
-      mi = this.menuNode.firstElementChild; // first menuitem
+  var menu = this; // reference needed within event handler
 
   this.menuNode.addEventListener('mouseover', function (event) {
     menu.handleMouseover(event);
@@ -56,6 +55,8 @@ Menu.prototype.init = function () {
   this.menuNode.addEventListener('mouseout', function (event) {
     menu.handleMouseout(event);
   });
+
+  var mi = this.menuNode.firstElementChild;
 
   while (mi) {
     if (mi.getAttribute('role')  === 'menuitem') {
@@ -79,6 +80,7 @@ Menu.prototype.init = function () {
         menu.handleBlur(event);
       });
     }
+
     mi = mi.nextElementSibling;
   }
 };
