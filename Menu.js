@@ -8,11 +8,11 @@
 var Menu = function (node) {
   // Check whether node is a DOM element
   if (!node instanceof Element)
-    throw new TypeError("Constructor argument 'node' is not a DOM Element.");
+    throw new TypeError("Menu constructor argument 'node' is not a DOM Element.");
 
   // Check whether menu has child menuitems
   if (node.childElementCount === 0)
-    throw new Error("Constructor argument 'node' has no Element children!")
+    throw new Error("Menu constructor argument 'node' has no Element children!")
 
   this.menuNode = node;
   node.tabIndex = -1;
@@ -130,11 +130,11 @@ Menu.prototype.handleClick = function (event) {
 };
 
 Menu.prototype.handleFocus = function (event) {
-  this.menuHasFocus = true;
+  this.hasFocus = true;
 };
 
 Menu.prototype.handleBlur = function (event) {
-  this.menuHasFocus = false;
+  this.hasFocus = false;
   setTimeout(function () { this.close() }, 500);
 };
 
@@ -196,7 +196,7 @@ Menu.prototype.open = function (relNode) {
 };
 
 Menu.prototype.close = function (force) {
-  if (force || (!this.mouseInMenu && !this.menuHasFocus))
+  if (force || (!this.mouseInMenu && !this.hasFocus))
     this.menuNode.style.display = 'none';
 };
 
