@@ -68,6 +68,14 @@ Menu.prototype.init = function () {
       mi.addEventListener('blur', function (event) {
         menu.handleBlur(event);
       });
+
+      mi.addEventListener('mouseover', function (event) {
+        menu.handleMouseover(event);
+      });
+
+      mi.addEventListener('mouseout', function (event) {
+        menu.handleMouseout(event);
+      });
     }
 
     mi = mi.nextElementSibling;
@@ -138,15 +146,13 @@ Menu.prototype.handleBlur = function (event) {
   setTimeout(function () { this.close() }, 500);
 };
 
-// not currently used
-Menu.prototype.handleMouseOver = function (event) {
-  this.mouseInMenu = true;
+Menu.prototype.handleMouseover = function (event) {
+  this.hasHover = true;
   this.open();
 };
 
-// not currently used
-Menu.prototype.handleMouseOut = function (event) {
-  this.mouseInMenu = false;
+Menu.prototype.handleMouseout = function (event) {
+  this.hasHover = false;
   setTimeout(function () { this.close() }, 500);
 };
 
@@ -196,7 +202,7 @@ Menu.prototype.open = function (relNode) {
 };
 
 Menu.prototype.close = function (force) {
-  if (force || (!this.mouseInMenu && !this.hasFocus))
+  if (force || (!this.hasHover && !this.hasFocus))
     this.menuNode.style.display = 'none';
 };
 
