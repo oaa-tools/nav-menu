@@ -75,6 +75,8 @@ MenuButton.prototype.init = function () {
   this.closeMenu();
 };
 
+/* EVENT HANDLERS */
+
 MenuButton.prototype.handleKeydown = function (event) {
   var flag = false;
 
@@ -128,16 +130,20 @@ MenuButton.prototype.handleBlur = function (event) {
   // setTimeout(function () { mb.closeMenu() }, 500);
 };
 
+// not currently used
 MenuButton.prototype.handleMouseover = function (event) {
   this.hasHover = true;
   this.openMenu();
 };
 
+// not currently used
 MenuButton.prototype.handleMouseout = function (event) {
   var mb = this;
   this.hasHover = false;
   setTimeout(function () { mb.closeMenu() }, 500);
 };
+
+/* ADDITIONAL METHODS */
 
 MenuButton.prototype.moveFocusToFirstMenuitem = function () {
   if (this.menu.firstItem) {

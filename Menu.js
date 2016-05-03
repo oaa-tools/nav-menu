@@ -84,7 +84,7 @@ Menu.prototype.init = function () {
   this.close();
 };
 
-/* Event handler methods */
+/* EVENT HANDLERS */
 
 Menu.prototype.handleKeydown = function (event) {
   var tgt = event.currentTarget,
@@ -149,19 +149,19 @@ Menu.prototype.handleBlur = function (event) {
   // setTimeout(function () { menu.close() }, 500);
 };
 
-/*
+// not currently used
 Menu.prototype.handleMouseover = function (event) {
   this.hasHover = true;
   this.open();
 };
 
+// not currently used
 Menu.prototype.handleMouseout = function (event) {
   this.hasHover = false;
   setTimeout(function () { this.close() }, 500);
 };
-*/
 
-/* Additional methods */
+/* ADDITIONAL METHODS */
 
 Menu.prototype.previousItem = function (currentItem) {
   var mi = currentItem.previousElementSibling;
