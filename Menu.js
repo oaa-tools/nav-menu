@@ -1,21 +1,22 @@
 /*
 *   @constructor Menu: Encapsulate state and behavior of menu
 *
-*   @param node : The element node that serves as the menu container.
+*   @param menuNode : The element node that serves as the menu container.
 *          Each child element that serves as a menuitem must have its
 *          role attribute set to 'menuitem'.
 */
-var Menu = function (node) {
-  // Check whether node is a DOM element
-  if (!node instanceof Element)
-    throw new TypeError("Menu constructor argument 'node' is not a DOM Element.");
+var Menu = function (menuNode, buttonNode) {
+  // Check whether menuNode is a DOM element
+  if (!menuNode instanceof Element)
+    throw new TypeError("Menu constructor argument 'menuNode' is not a DOM Element.");
 
   // Check whether menu has child menuitems
-  if (node.childElementCount === 0)
-    throw new Error("Menu constructor argument 'node' has no Element children!")
+  if (menuNode.childElementCount === 0)
+    throw new Error("Menu constructor argument 'menuNode' has no Element children!")
 
-  this.menuNode = node;
-  node.tabIndex = -1;
+  this.menuNode = menuNode;
+  this.buttonNode = buttonNode;
+  menuNode.tabIndex = -1;
 
   this.firstItem = null;
   this.lastItem  = null;
@@ -69,17 +70,18 @@ Menu.prototype.init = function () {
         menu.handleBlur(event);
       });
 
-      mi.addEventListener('mouseover', function (event) {
-        menu.handleMouseover(event);
-      });
+      //mi.addEventListener('mouseover', function (event) {
+      //  menu.handleMouseover(event);
+      //});
 
-      mi.addEventListener('mouseout', function (event) {
-        menu.handleMouseout(event);
-      });
+      //mi.addEventListener('mouseout', function (event) {
+      //  menu.handleMouseout(event);
+      //});
     }
-
     mi = mi.nextElementSibling;
   }
+
+  this.close();
 };
 
 /* Event handler methods */
@@ -97,13 +99,13 @@ Menu.prototype.handleKeydown = function (event) {
         'cancelable': true
       });
       tgt.dispatchEvent(clickEvent);
-      this.menuButton.closeMenu(true);
+      this.close(true);
       flag = true;
       break;
 
     case this.keyCode.ESC:
-      this.menuButton.closeMenu(true);
-      this.menuButton.buttonNode.focus();
+      this.close(true);
+      this.buttonNode.focus();
       flag = true;
       break;
 
@@ -120,7 +122,7 @@ Menu.prototype.handleKeydown = function (event) {
       break;
 
     case this.keyCode.TAB:
-      this.menuButton.closeMenu(true, false);
+      this.close(true, false);
       break;
 
     default:
@@ -142,10 +144,12 @@ Menu.prototype.handleFocus = function (event) {
 };
 
 Menu.prototype.handleBlur = function (event) {
+  var menu = this;
   this.hasFocus = false;
-  setTimeout(function () { this.close() }, 500);
+  // setTimeout(function () { menu.close() }, 500);
 };
 
+/*
 Menu.prototype.handleMouseover = function (event) {
   this.hasHover = true;
   this.open();
@@ -155,6 +159,7 @@ Menu.prototype.handleMouseout = function (event) {
   this.hasHover = false;
   setTimeout(function () { this.close() }, 500);
 };
+*/
 
 /* Additional methods */
 
@@ -190,10 +195,10 @@ Menu.prototype.nextItem = function (currentItem) {
   }
 };
 
-Menu.prototype.open = function (relNode) {
+Menu.prototype.open = function () {
   // get position and bounding rectangle of relNode (e.g. menubutton)
-  var pos  = this.getPosition(relNode);
-  var rect = relNode.getBoundingClientRect();
+  var pos  = this.getPosition(this.buttonNode);
+  var rect = this.buttonNode.getBoundingClientRect();
 
   this.menuNode.style.display = 'block';
   this.menuNode.style.position = 'absolute';
@@ -202,8 +207,10 @@ Menu.prototype.open = function (relNode) {
 };
 
 Menu.prototype.close = function (force) {
-  if (force || (!this.hasHover && !this.hasFocus))
+  if (force || (!this.hasHover && !this.hasFocus)) {
     this.menuNode.style.display = 'none';
+    this.buttonNode.focus();
+  }
 };
 
 Menu.prototype.getPosition = function (element) {
