@@ -136,7 +136,7 @@ Menu.prototype.handleKeydown = function (event) {
 };
 
 Menu.prototype.handleClick = function (event) {
-  this.close();
+  this.close(true);
 };
 
 Menu.prototype.handleFocus = function (event) {
