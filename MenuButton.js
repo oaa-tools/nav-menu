@@ -1,19 +1,19 @@
 /*
 *   @constructor MenuButton: Encapsulate state and behavior of menu button
 *
-*   @param node : The element node that serves as the menubutton control.
+*   @param buttonNode : The element node that serves as the menubutton control.
 */
-var MenuButton = function (node) {
-  // Check whether node is a DOM element
-  if (!node instanceof Element)
-    throw new TypeError("MenuButton constructor argument 'node' is not a DOM Element.");
+var MenuButton = function (buttonNode) {
+  // Check whether buttonNode is a DOM element
+  if (!buttonNode instanceof Element)
+    throw new TypeError("MenuButton constructor argument 'buttonNode' is not a DOM Element.");
 
-  this.buttonNode = node;
+  this.buttonNode = buttonNode;
   this.menuNode = null;
   this.isLink = false;
 
-  if (node.tagName.toLowerCase() === 'a') {
-    var url = node.getAttribute('href');
+  if (buttonNode.tagName.toLowerCase() === 'a') {
+    var url = buttonNode.getAttribute('href');
     if (url && url.length) {
       this.isLink = true;
     }
@@ -35,11 +35,14 @@ MenuButton.prototype.init = function () {
 
   if (id) {
     this.menuNode = document.getElementById(id);
-    if (this.menuNode)
+    if (this.menuNode) {
       // Instantiate and initialize Menu object
-      this.menu = new Menu(this.menuNode).init();
-    else
+      this.menu = new Menu(this.menuNode, this.buttonNode);
+      this.menu.init();
+    }
+    else {
       throw new Error("MenuButton init error: menuNode not found.");
+    }
   }
   else {
     throw new Error("MenuButton init error: 'aria-controls' id not found.")
@@ -61,13 +64,13 @@ MenuButton.prototype.init = function () {
     menuButton.handleBlur(event);
   });
 
-  this.buttonNode.addEventListener('mouseover', function (event) {
-    menuButton.handleMouseover(event);
-  });
+  //this.buttonNode.addEventListener('mouseover', function (event) {
+  //  menuButton.handleMouseover(event);
+  //});
 
-  this.buttonNode.addEventListener('mouseout', function (event) {
-    menuButton.handleMouseout(event);
-  });
+  //this.buttonNode.addEventListener('mouseout', function (event) {
+  //  menuButton.handleMouseout(event);
+  //});
 
   this.closeMenu();
 };
@@ -78,22 +81,22 @@ MenuButton.prototype.handleKeydown = function (event) {
   switch (event.keyCode) {
 
     case this.keyCode.SPACE:
-      this.moveFocusToFirstMenuItem();
+      this.moveFocusToFirstMenuitem();
       flag = true;
       break;
 
     case this.keyCode.RETURN:
-      this.moveFocusToFirstMenuItem();
+      this.moveFocusToFirstMenuitem();
         flag = true;
       break;
 
     case this.keyCode.UP:
-      this.moveFocusToLastMenuItem();
+      this.moveFocusToLastMenuitem();
       flag = true;
       break;
 
     case this.keyCode.DOWN:
-      this.moveFocusToFirstMenuItem();
+      this.moveFocusToFirstMenuitem();
       flag = true;
       break;
 
@@ -112,7 +115,7 @@ MenuButton.prototype.handleKeydown = function (event) {
 };
 
 MenuButton.prototype.handleClick = function (event) {
- this.moveFocusToFirstMenuItem();
+ this.moveFocusToFirstMenuitem();
 };
 
 MenuButton.prototype.handleFocus = function (event) {
@@ -120,8 +123,9 @@ MenuButton.prototype.handleFocus = function (event) {
 };
 
 MenuButton.prototype.handleBlur = function (event) {
+  var mb = this;
   this.hasFocus = false;
-  setTimeout(function () { this.close() }, 500);
+  // setTimeout(function () { mb.closeMenu() }, 500);
 };
 
 MenuButton.prototype.handleMouseover = function (event) {
@@ -130,8 +134,9 @@ MenuButton.prototype.handleMouseover = function (event) {
 };
 
 MenuButton.prototype.handleMouseout = function (event) {
+  var mb = this;
   this.hasHover = false;
-  setTimeout(function () { this.closeMenu() }, 500);
+  setTimeout(function () { mb.closeMenu() }, 500);
 };
 
 MenuButton.prototype.moveFocusToFirstMenuitem = function () {
@@ -142,9 +147,9 @@ MenuButton.prototype.moveFocusToFirstMenuitem = function () {
 };
 
 MenuButton.prototype.moveFocusToLastMenuitem = function () {
-  if (this.menu.lastMenuItem) {
+  if (this.menu.lastItem) {
     this.openMenu();
-    this.menu.lastMenuItem.focus();
+    this.menu.lastItem.focus();
   }
 };
 
