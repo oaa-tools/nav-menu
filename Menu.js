@@ -4,8 +4,9 @@
 *   @param menuNode : The element node that serves as the menu container.
 *          Each child element that serves as a menuitem must have its
 *          role attribute set to 'menuitem'.
+*   @param menuButton: The MenuButton object associated with this menu.
 */
-var Menu = function (menuNode, buttonNode) {
+var Menu = function (menuNode, menuButton) {
   // Check whether menuNode is a DOM element
   if (!menuNode instanceof Element)
     throw new TypeError("Menu constructor argument 'menuNode' is not a DOM Element.");
@@ -15,7 +16,7 @@ var Menu = function (menuNode, buttonNode) {
     throw new Error("Menu constructor argument 'menuNode' has no Element children!")
 
   this.menuNode = menuNode;
-  this.buttonNode = buttonNode;
+  this.menuButton = menuButton;
   menuNode.tabIndex = -1;
 
   this.firstItem = null;
@@ -48,6 +49,14 @@ Menu.prototype.init = function () {
   var menu = this, // for reference from within event handler
       mi = this.menuNode.firstElementChild; // first menuitem
 
+  this.menuNode.addEventListener('mouseover', function (event) {
+    menu.handleMouseover(event);
+  });
+
+  this.menuNode.addEventListener('mouseout', function (event) {
+    menu.handleMouseout(event);
+  });
+
   while (mi) {
     if (mi.getAttribute('role')  === 'menuitem') {
       mi.tabIndex = -1;
@@ -69,19 +78,9 @@ Menu.prototype.init = function () {
       mi.addEventListener('blur', function (event) {
         menu.handleBlur(event);
       });
-
-      //mi.addEventListener('mouseover', function (event) {
-      //  menu.handleMouseover(event);
-      //});
-
-      //mi.addEventListener('mouseout', function (event) {
-      //  menu.handleMouseout(event);
-      //});
     }
     mi = mi.nextElementSibling;
   }
-
-  this.close();
 };
 
 /* EVENT HANDLERS */
@@ -105,7 +104,7 @@ Menu.prototype.handleKeydown = function (event) {
 
     case this.keyCode.ESC:
       this.close(true);
-      this.buttonNode.focus();
+      this.menuButton.buttonNode.focus();
       flag = true;
       break;
 
@@ -149,16 +148,15 @@ Menu.prototype.handleBlur = function (event) {
   // setTimeout(function () { menu.close() }, 500);
 };
 
-// not currently used
 Menu.prototype.handleMouseover = function (event) {
   this.hasHover = true;
-  this.open();
 };
 
-// not currently used
 Menu.prototype.handleMouseout = function (event) {
+  var menu = this;
   this.hasHover = false;
-  setTimeout(function () { this.close() }, 500);
+  // do not force close
+  setTimeout(function () { menu.close() }, 500);
 };
 
 /* ADDITIONAL METHODS */
@@ -197,8 +195,8 @@ Menu.prototype.nextItem = function (currentItem) {
 
 Menu.prototype.open = function () {
   // get position and bounding rectangle of relNode (e.g. menubutton)
-  var pos  = this.getPosition(this.buttonNode);
-  var rect = this.buttonNode.getBoundingClientRect();
+  var pos  = this.getPosition(this.menuButton.buttonNode);
+  var rect = this.menuButton.buttonNode.getBoundingClientRect();
 
   this.menuNode.style.display = 'block';
   this.menuNode.style.position = 'absolute';
@@ -207,9 +205,9 @@ Menu.prototype.open = function () {
 };
 
 Menu.prototype.close = function (force) {
-  if (force || (!this.hasHover && !this.hasFocus)) {
+  if (force || (!this.hasHover && !this.hasFocus && !this.menuButton.hasHover)) {
     this.menuNode.style.display = 'none';
-    this.buttonNode.focus();
+    this.menuButton.buttonNode.focus();
   }
 };
 

@@ -37,7 +37,7 @@ MenuButton.prototype.init = function () {
     this.menuNode = document.getElementById(id);
     if (this.menuNode) {
       // Instantiate and initialize Menu object
-      this.menu = new Menu(this.menuNode, this.buttonNode);
+      this.menu = new Menu(this.menuNode, this);
       this.menu.init();
     }
     else {
@@ -64,13 +64,13 @@ MenuButton.prototype.init = function () {
     menuButton.handleBlur(event);
   });
 
-  //this.buttonNode.addEventListener('mouseover', function (event) {
-  //  menuButton.handleMouseover(event);
-  //});
+  this.buttonNode.addEventListener('mouseover', function (event) {
+    menuButton.handleMouseover(event);
+  });
 
-  //this.buttonNode.addEventListener('mouseout', function (event) {
-  //  menuButton.handleMouseout(event);
-  //});
+  this.buttonNode.addEventListener('mouseout', function (event) {
+    menuButton.handleMouseout(event);
+  });
 
   this.closeMenu();
 };
@@ -130,13 +130,11 @@ MenuButton.prototype.handleBlur = function (event) {
   // setTimeout(function () { mb.closeMenu() }, 500);
 };
 
-// not currently used
 MenuButton.prototype.handleMouseover = function (event) {
   this.hasHover = true;
   this.openMenu();
 };
 
-// not currently used
 MenuButton.prototype.handleMouseout = function (event) {
   var mb = this;
   this.hasHover = false;
@@ -160,16 +158,13 @@ MenuButton.prototype.moveFocusToLastMenuitem = function () {
 };
 
 MenuButton.prototype.openMenu = function () {
-  this.menu.open(this.buttonNode);
+  this.menu.open();
 };
 
-MenuButton.prototype.closeMenu = function (force, focus_menu_button) {
-  if (typeof force !== 'boolean') force = false;
-  if (typeof focus_menu_button !== 'boolean') focus_menu_button = true;
-
-  if (force || !this.hasHover) {
-      this.menu.close(force);
-      if (focus_menu_button) this.buttonNode.focus();
+MenuButton.prototype.closeMenu = function () {
+  if (!this.hasHover && !this.menu.hasHover) {
+    this.menu.close();
+    this.buttonNode.focus();
   }
 };
 
