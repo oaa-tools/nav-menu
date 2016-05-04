@@ -72,7 +72,8 @@ MenuButton.prototype.init = function () {
     menuButton.handleMouseout(event);
   });
 
-  this.closeMenu();
+  console.log('MB: init');
+  this.closeMenu(false, false);
 };
 
 /* EVENT HANDLERS */
@@ -103,6 +104,7 @@ MenuButton.prototype.handleKeydown = function (event) {
       break;
 
     case this.keyCode.TAB:
+      console.log('MB: keydown: TAB');
       this.closeMenu(true, false);
       break;
 
@@ -125,9 +127,7 @@ MenuButton.prototype.handleFocus = function (event) {
 };
 
 MenuButton.prototype.handleBlur = function (event) {
-  var mb = this;
   this.hasFocus = false;
-  // setTimeout(function () { mb.closeMenu() }, 500);
 };
 
 MenuButton.prototype.handleMouseover = function (event) {
@@ -138,7 +138,8 @@ MenuButton.prototype.handleMouseover = function (event) {
 MenuButton.prototype.handleMouseout = function (event) {
   var mb = this;
   this.hasHover = false;
-  setTimeout(function () { mb.closeMenu() }, 500);
+  console.log('MB: mouseout');
+  setTimeout(function () { mb.closeMenu(false, false) }, 500);
 };
 
 /* ADDITIONAL METHODS */
@@ -161,11 +162,9 @@ MenuButton.prototype.openMenu = function () {
   this.menu.open();
 };
 
-MenuButton.prototype.closeMenu = function () {
-  if (!this.hasHover && !this.menu.hasHover) {
-    this.menu.close();
-    this.buttonNode.focus();
-  }
+MenuButton.prototype.closeMenu = function (force, focusMenuButton) {
+  console.log('MB: closeMenu');
+  this.menu.close(force, focusMenuButton);
 };
 
 // not currently used

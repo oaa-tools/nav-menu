@@ -100,13 +100,14 @@ Menu.prototype.handleKeydown = function (event) {
         'cancelable': true
       });
       tgt.dispatchEvent(clickEvent);
+      console.log('M: keydown: SPACE/RETURN');
       this.close(true);
       flag = true;
       break;
 
     case this.keyCode.ESC:
+      console.log('M: keydown: ESC');
       this.close(true);
-      this.menuButton.buttonNode.focus();
       flag = true;
       break;
 
@@ -123,6 +124,7 @@ Menu.prototype.handleKeydown = function (event) {
       break;
 
     case this.keyCode.TAB:
+      console.log('M: keydown: TAB');
       this.close(true, false);
       break;
 
@@ -137,6 +139,7 @@ Menu.prototype.handleKeydown = function (event) {
 };
 
 Menu.prototype.handleClick = function (event) {
+  console.log('M: click');
   this.close(true);
 };
 
@@ -147,7 +150,8 @@ Menu.prototype.handleFocus = function (event) {
 Menu.prototype.handleBlur = function (event) {
   var menu = this;
   this.hasFocus = false;
-  // setTimeout(function () { menu.close() }, 500);
+  console.log('M: blur');
+  setTimeout(function () { menu.close(false, false) }, 500);
 };
 
 Menu.prototype.handleMouseover = function (event) {
@@ -158,7 +162,8 @@ Menu.prototype.handleMouseout = function (event) {
   var menu = this;
   this.hasHover = false;
   // do not force close
-  setTimeout(function () { menu.close() }, 500);
+  console.log('M: mouseout');
+  setTimeout(function () { menu.close(false, false) }, 500);
 };
 
 /* ADDITIONAL METHODS */
@@ -206,11 +211,14 @@ Menu.prototype.open = function () {
   this.menuNode.style.left = pos.x + "px"; ;
 };
 
-Menu.prototype.close = function (force) {
-  if (force || (!this.hasHover && !this.hasFocus && !this.menuButton.hasHover)) {
+Menu.prototype.close = function (force, setFocusToButton) {
+  if (typeof setFocusToButton === 'undefined') setFocusToButton = true;
+
+  if (force || (!this.hasFocus && !this.hasHover && !this.menuButton.hasHover)) {
     this.menuNode.style.display = 'none';
-    this.menuButton.buttonNode.focus();
+    if (setFocusToButton) this.menuButton.buttonNode.focus();
   }
+  console.log('M: close: ' + force + ' ' + setFocusToButton);
 };
 
 Menu.prototype.getPosition = function (element) {
