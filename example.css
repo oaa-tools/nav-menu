@@ -9,6 +9,7 @@ div[role="menu"] a {
 }
 
 ul[role="menu"] {
+  display: none;
   position: absolute;
   margin: 0;
   padding: 0;
