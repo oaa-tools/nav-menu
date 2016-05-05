@@ -1,17 +1,25 @@
 /*
-*   @constructor Menu: Encapsulate state and behavior of menu
+*   @constructor Menu
 *
-*   @param menuNode : The element node that serves as the menu container.
-*          Each child element that serves as a menuitem must have its
-*          role attribute set to 'menuitem'.
-*   @param menuButton: The MenuButton object associated with this menu.
+*   @desc
+*       Object that encapsulates data and behavior (via event handlers)
+*       of a custom HTML menu component.
+*
+*   @param menuNode
+*       The DOM element node that serves as the menu container.
+*       Each child element of menuNode that represents a menuitem
+*       must have its role attribute set to 'menuitem'.
+*
+*   @param menuButton
+*       The MenuButton object associated with this menu. See MenuButton.js
+*       for its description.
 */
 var Menu = function (menuNode, menuButton) {
   // Check whether menuNode is a DOM element
   if (!menuNode instanceof Element)
     throw new TypeError("Menu constructor argument 'menuNode' is not a DOM Element.");
 
-  // Check whether menu has child menuitems
+  // Check whether menu has child elements
   if (menuNode.childElementCount === 0)
     throw new Error("Menu constructor argument 'menuNode' has no Element children!")
 
@@ -41,48 +49,48 @@ var Menu = function (menuNode, menuButton) {
 /*
 *   @method Menu.prototype.init
 *
-*   Add menuNode event listeners for mouseover and mouseout
-*   Initialize firstItem, lastItem properties
-*   For each menuitem:
-*     Set tabindex to -1
-*     Add event listeners for keydown, click, focus and blur
+*   @desc
+*       Add menuNode event listeners for mouseover and mouseout.
+*       Set firstItem and lastItem to corresponding menuitems.
+*       For each menuitem: set tabindex and add event listeners
+*       for keydown, click, focus and blur events.
 */
 Menu.prototype.init = function () {
-  var menu = this; // reference needed within event handler
+  var menuitem, that = this;
 
   this.menuNode.addEventListener('mouseover', function (event) {
-    menu.handleMouseover(event);
+    that.handleMouseover(event);
   });
 
   this.menuNode.addEventListener('mouseout', function (event) {
-    menu.handleMouseout(event);
+    that.handleMouseout(event);
   });
 
-  var mi = this.menuNode.firstElementChild;
+  menuitem = this.menuNode.firstElementChild;
 
-  while (mi) {
-    if (mi.getAttribute('role')  === 'menuitem') {
-      mi.tabIndex = -1;
-      if (!this.firstItem) this.firstItem = mi;
-      this.lastItem = mi;
+  while (menuitem) {
+    if (menuitem.getAttribute('role')  === 'menuitem') {
+      menuitem.tabIndex = -1;
+      if (!this.firstItem) this.firstItem = menuitem;
+      this.lastItem = menuitem;
 
-      mi.addEventListener('keydown', function (event) {
-        menu.handleKeydown(event);
+      menuitem.addEventListener('keydown', function (event) {
+        that.handleKeydown(event);
       });
 
-      mi.addEventListener('click', function (event) {
-        menu.handleClick(event);
+      menuitem.addEventListener('click', function (event) {
+        that.handleClick(event);
       });
 
-      mi.addEventListener('focus', function (event) {
-        menu.handleFocus(event);
+      menuitem.addEventListener('focus', function (event) {
+        that.handleFocus(event);
       });
 
-      mi.addEventListener('blur', function (event) {
-        menu.handleBlur(event);
+      menuitem.addEventListener('blur', function (event) {
+        that.handleBlur(event);
       });
     }
-    mi = mi.nextElementSibling;
+    menuitem = menuitem.nextElementSibling;
   }
 };
 
@@ -101,8 +109,8 @@ Menu.prototype.handleKeydown = function (event) {
         'cancelable': true
       });
       tgt.dispatchEvent(clickEvent);
-      // Call to this.close was removed on the assumption
-      // that the click handler will make that call.
+      // Call to this.close was removed because it duplicates
+      // the same call made by the click handler.
       flag = true;
       break;
 
@@ -159,9 +167,9 @@ Menu.prototype.handleFocus = function (event) {
 };
 
 Menu.prototype.handleBlur = function (event) {
-  var menu = this;
+  var that = this;
   this.hasFocus = false;
-  setTimeout(function () { menu.close(false) }, 300);
+  setTimeout(function () { that.close(false) }, 300);
 };
 
 Menu.prototype.handleMouseover = function (event) {
@@ -169,9 +177,9 @@ Menu.prototype.handleMouseover = function (event) {
 };
 
 Menu.prototype.handleMouseout = function (event) {
-  var menu = this;
+  var that = this;
   this.hasHover = false;
-  setTimeout(function () { menu.close(false) }, 300);
+  setTimeout(function () { that.close(false) }, 300);
 };
 
 /* ADDITIONAL METHODS */
@@ -181,33 +189,33 @@ Menu.prototype.setFocusToButton = function () {
 };
 
 Menu.prototype.setFocusToPreviousItem = function (currentItem) {
-  var mi = currentItem.previousElementSibling;
+  var menuitem = currentItem.previousElementSibling;
 
-  while (mi) {
-    if (mi.getAttribute('role')  === 'menuitem') {
-      mi.focus();
+  while (menuitem) {
+    if (menuitem.getAttribute('role')  === 'menuitem') {
+      menuitem.focus();
       break;
     }
-    mi = mi.previousElementSibling;
+    menuitem = menuitem.previousElementSibling;
   }
 
-  if (!mi && this.lastItem) {
+  if (!menuitem && this.lastItem) {
     this.lastItem.focus();
   }
 };
 
 Menu.prototype.setFocusToNextItem = function (currentItem) {
-  var mi = currentItem.nextElementSibling;
+  var menuitem = currentItem.nextElementSibling;
 
-  while (mi) {
-    if (mi.getAttribute('role')  === 'menuitem') {
-      mi.focus();
+  while (menuitem) {
+    if (menuitem.getAttribute('role')  === 'menuitem') {
+      menuitem.focus();
       break;
     }
-    mi = mi.nextElementSibling;
+    menuitem = menuitem.nextElementSibling;
   }
 
-  if (!mi && this.firstItem) {
+  if (!menuitem && this.firstItem) {
     this.firstItem.focus();
   }
 };

@@ -1,12 +1,20 @@
 /*
-*   @constructor MenuButton: Encapsulate state and behavior of menu button
+*   @constructor MenuButton
 *
-*   @param buttonNode : The element node that serves as the menubutton control.
+*   @desc
+*       Object that encapsulates data and behavior (via event handlers)
+*       of an HTML button or custom button-like component that, in turn
+*       controls a menu component.
+*
+*   @param buttonNode
+*       The DOM element that serves as the menubutton control.
 */
 var MenuButton = function (buttonNode) {
+
   // Check whether buttonNode is a DOM element
-  if (!buttonNode instanceof Element)
+  if (!buttonNode instanceof Element) {
     throw new TypeError("MenuButton constructor argument 'buttonNode' is not a DOM Element.");
+  }
 
   this.buttonNode = buttonNode;
   this.menuNode = null;
@@ -28,14 +36,21 @@ var MenuButton = function (buttonNode) {
   });
 };
 
+/*
+*   @method MenuButton.prototype.init
+*
+*   @desc
+*       Find and store the menuNode associated with button via its
+*       aria-controls attribute; instantiate and initialize the Menu
+*       object associated with the menuNode; add event listeners.
+*/
 MenuButton.prototype.init = function () {
-  var id = this.buttonNode.getAttribute('aria-controls'),
-      menuButton = this;
+  var id, that = this;
 
+  id = this.buttonNode.getAttribute('aria-controls');
   if (id) {
     this.menuNode = document.getElementById(id);
     if (this.menuNode) {
-      // Instantiate and initialize Menu object
       this.menu = new Menu(this.menuNode, this);
       this.menu.init();
     }
@@ -48,19 +63,19 @@ MenuButton.prototype.init = function () {
   }
 
   this.buttonNode.addEventListener('mouseover', function (event) {
-    menuButton.handleMouseover(event);
+    that.handleMouseover(event);
   });
 
   this.buttonNode.addEventListener('mouseout', function (event) {
-    menuButton.handleMouseout(event);
+    that.handleMouseout(event);
   });
 
   this.buttonNode.addEventListener('keydown', function (event) {
-    menuButton.handleKeydown(event);
+    that.handleKeydown(event);
   });
 
   this.buttonNode.addEventListener('click', function (event) {
-    menuButton.handleClick(event);
+    that.handleClick(event);
   });
 };
 
@@ -80,7 +95,7 @@ MenuButton.prototype.handleKeydown = function (event) {
     case this.keyCode.RETURN:
       this.menu.open();
       this.menu.setFocusToFirstItem();
-        flag = true;
+      flag = true;
       break;
 
     case this.keyCode.UP:
@@ -116,7 +131,7 @@ MenuButton.prototype.handleMouseover = function (event) {
 };
 
 MenuButton.prototype.handleMouseout = function (event) {
-  var mb = this;
+  var that = this;
   this.hasHover = false;
-  setTimeout(function () { mb.menu.close(false) }, 300);
+  setTimeout(function () { that.menu.close(false) }, 300);
 };
