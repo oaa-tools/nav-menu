@@ -13,7 +13,7 @@ Examples that utilize `Menu` and `MenuButton` components with ARIA and keyboard 
 
 * The property `isLink` (see constructor) is unused: what was its original purpose?
 * In the `keydown` handler, removed handling for `TAB`, which does not appear to need special handling.
-* Eliminated `openMenu` and `closeMenu` methods, replacing calls to them with calls to the `Menu` methods `open` and `close`.
+* Eliminated `openMenu` and `closeMenu` methods; replaced with calls to `Menu` methods `open` and `close`.
 * Renamed methods `moveFocusToFirstMenuItem` and `moveFocusToLastMenuItem` to `setFocusToFirstItem` and `setFocusToLastItem` respectively, and moved them to the `Menu` object.
 
 ### Conventions Adopted
