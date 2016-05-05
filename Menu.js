@@ -94,7 +94,7 @@ Menu.prototype.init = function () {
   }
 };
 
-/* EVENT HANDLERS */
+/* EVENT HANDLERS FOR MENU ITEMS */
 
 Menu.prototype.handleKeydown = function (event) {
   var tgt = event.currentTarget,
@@ -171,6 +171,8 @@ Menu.prototype.handleBlur = function (event) {
   this.hasFocus = false;
   setTimeout(function () { that.close(false) }, 300);
 };
+
+/* EVENT HANDLERS FOR MENU CONTAINER */
 
 Menu.prototype.handleMouseover = function (event) {
   this.hasHover = true;
