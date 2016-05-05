@@ -21,6 +21,7 @@ var Menu = function (menuNode, menuButton) {
 
   this.firstItem = null;
   this.lastItem  = null;
+  this.debug = false;
 
   this.keyCode = Object.freeze({
     'TAB'      :  9,
@@ -41,9 +42,11 @@ var Menu = function (menuNode, menuButton) {
 /*
 *   @method Menu.prototype.init
 *
-*   Initialize firstItem, lastItem
-*   Set tabindex for each menuitem
-*   Add event listeners for 'keydown', 'click', 'blur' and 'focus' events
+*   Add menuNode event listeners for mouseover and mouseout
+*   Initialize firstItem, lastItem properties
+*   For each menuitem:
+*     Set tabindex to -1
+*     Add event listeners for keydown, click, focus and blur
 */
 Menu.prototype.init = function () {
   var menu = this; // reference needed within event handler
@@ -80,7 +83,6 @@ Menu.prototype.init = function () {
         menu.handleBlur(event);
       });
     }
-
     mi = mi.nextElementSibling;
   }
 };
@@ -100,13 +102,15 @@ Menu.prototype.handleKeydown = function (event) {
         'cancelable': true
       });
       tgt.dispatchEvent(clickEvent);
-      console.log('M: keydown: SPACE/RETURN');
-      this.close(true);
+      if (this.debug) console.log('M: keydown: SPACE/RETURN');
+      // Call to this.close was removed on the assumption
+      // that the click handler will make that call.
       flag = true;
       break;
 
     case this.keyCode.ESC:
-      console.log('M: keydown: ESC');
+      if (this.debug) console.log('M: keydown: ESC');
+      this.setFocusToButton();
       this.close(true);
       flag = true;
       break;
@@ -124,8 +128,9 @@ Menu.prototype.handleKeydown = function (event) {
       break;
 
     case this.keyCode.TAB:
-      console.log('M: keydown: TAB');
-      this.close(true, false);
+      if (this.debug) console.log('M: keydown: TAB');
+      this.setFocusToButton();
+      this.close(true);
       break;
 
     default:
@@ -139,7 +144,8 @@ Menu.prototype.handleKeydown = function (event) {
 };
 
 Menu.prototype.handleClick = function (event) {
-  console.log('M: click');
+  if (this.debug) console.log('M: click');
+  this.setFocusToButton();
   this.close(true);
 };
 
@@ -150,8 +156,8 @@ Menu.prototype.handleFocus = function (event) {
 Menu.prototype.handleBlur = function (event) {
   var menu = this;
   this.hasFocus = false;
-  console.log('M: blur');
-  setTimeout(function () { menu.close(false, false) }, 500);
+  if (this.debug) console.log('M: blur');
+  setTimeout(function () { menu.close(false) }, 300);
 };
 
 Menu.prototype.handleMouseover = function (event) {
@@ -162,11 +168,15 @@ Menu.prototype.handleMouseout = function (event) {
   var menu = this;
   this.hasHover = false;
   // do not force close
-  console.log('M: mouseout');
-  setTimeout(function () { menu.close(false, false) }, 500);
+  if (this.debug) console.log('M: mouseout');
+  setTimeout(function () { menu.close(false) }, 300);
 };
 
 /* ADDITIONAL METHODS */
+
+Menu.prototype.setFocusToButton = function () {
+  this.menuButton.buttonNode.focus();
+};
 
 Menu.prototype.previousItem = function (currentItem) {
   var mi = currentItem.previousElementSibling;
@@ -211,14 +221,11 @@ Menu.prototype.open = function () {
   this.menuNode.style.left = pos.x + "px"; ;
 };
 
-Menu.prototype.close = function (force, setFocusToButton) {
-  if (typeof setFocusToButton === 'undefined') setFocusToButton = true;
-
+Menu.prototype.close = function (force) {
   if (force || (!this.hasFocus && !this.hasHover && !this.menuButton.hasHover)) {
     this.menuNode.style.display = 'none';
-    if (setFocusToButton) this.menuButton.buttonNode.focus();
   }
-  console.log('M: close: ' + force + ' ' + setFocusToButton);
+  if (this.debug) console.log('M: close: ' + force);
 };
 
 Menu.prototype.getPosition = function (element) {

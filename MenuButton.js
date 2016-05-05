@@ -11,6 +11,7 @@ var MenuButton = function (buttonNode) {
   this.buttonNode = buttonNode;
   this.menuNode = null;
   this.isLink = false;
+  this.debug = false;
 
   if (buttonNode.tagName.toLowerCase() === 'a') {
     var url = buttonNode.getAttribute('href');
@@ -48,6 +49,14 @@ MenuButton.prototype.init = function () {
     throw new Error("MenuButton init error: 'aria-controls' id not found.")
   }
 
+  this.buttonNode.addEventListener('mouseover', function (event) {
+    menuButton.handleMouseover(event);
+  });
+
+  this.buttonNode.addEventListener('mouseout', function (event) {
+    menuButton.handleMouseout(event);
+  });
+
   this.buttonNode.addEventListener('keydown', function (event) {
     menuButton.handleKeydown(event);
   });
@@ -63,17 +72,6 @@ MenuButton.prototype.init = function () {
   this.buttonNode.addEventListener('blur', function (event) {
     menuButton.handleBlur(event);
   });
-
-  this.buttonNode.addEventListener('mouseover', function (event) {
-    menuButton.handleMouseover(event);
-  });
-
-  this.buttonNode.addEventListener('mouseout', function (event) {
-    menuButton.handleMouseout(event);
-  });
-
-  console.log('MB: init');
-  this.closeMenu(false, false);
 };
 
 /* EVENT HANDLERS */
@@ -103,10 +101,9 @@ MenuButton.prototype.handleKeydown = function (event) {
       flag = true;
       break;
 
-    case this.keyCode.TAB:
-      console.log('MB: keydown: TAB');
-      this.closeMenu(true, false);
-      break;
+    // Removed case this.keyCode.TAB: If menubutton has focus,
+    // which it must have if it is the target of a keydown tab
+    // event, the menu could not be open.
 
     default:
       break;
@@ -138,8 +135,8 @@ MenuButton.prototype.handleMouseover = function (event) {
 MenuButton.prototype.handleMouseout = function (event) {
   var mb = this;
   this.hasHover = false;
-  console.log('MB: mouseout');
-  setTimeout(function () { mb.closeMenu(false, false) }, 500);
+  if (this.debug) console.log('MB: mouseout');
+  setTimeout(function () { mb.closeMenu(false) }, 300);
 };
 
 /* ADDITIONAL METHODS */
@@ -162,13 +159,7 @@ MenuButton.prototype.openMenu = function () {
   this.menu.open();
 };
 
-MenuButton.prototype.closeMenu = function (force, focusMenuButton) {
-  console.log('MB: closeMenu');
-  this.menu.close(force, focusMenuButton);
-};
-
-// not currently used
-MenuButton.prototype.toggleMenu = function () {
-  if (this.menuNode.style.display === 'block') this.menuNode.style.display = 'none';
-  else this.menuNode.style.display = 'block';
+MenuButton.prototype.closeMenu = function (force) {
+  if (this.debug) console.log('MB: closeMenu');
+  this.menu.close(force);
 };
