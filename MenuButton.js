@@ -18,14 +18,6 @@ var MenuButton = function (buttonNode) {
 
   this.buttonNode = buttonNode;
   this.menuNode = null;
-  this.isLink = false;
-
-  if (buttonNode.tagName.toLowerCase() === 'a') {
-    var url = buttonNode.getAttribute('href');
-    if (url && url.length) {
-      this.isLink = true;
-    }
-  }
 
   this.keyCode = Object.freeze({
     'RETURN' : 13,
