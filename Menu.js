@@ -109,22 +109,15 @@ Menu.prototype.handleKeydown = function (event) {
           'bubbles': true,
           'cancelable': true
         });
-        tgt.dispatchEvent(clickEvent);
       }
       catch(err) {
         if (document.createEvent) {
           // DOM Level 2
           clickEvent = document.createEvent('MouseEvents');
-          clickEvent.initMouseEvent('click', true, true, window, null, 0, 0, 0, 0, false, false, false, false, 0, null);
-          tgt.dispatchEvent(clickEvent);
-        }
-        else {
-          // IE8 and below
-          clickEvent = document.createEventObject();
-          clickEvent.relatedTarget = null;
-          tgt.fireEvent('onclick', clickEvent);
+          clickEvent.initEvent('click', true, true);
         }
       }
+      tgt.dispatchEvent(clickEvent);
       // Call to this.close was removed because it duplicates
       // the same call made by the click handler.
       flag = true;
