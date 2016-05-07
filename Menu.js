@@ -103,6 +103,8 @@ Menu.prototype.handleKeydown = function (event) {
   switch (event.keyCode) {
     case this.keyCode.SPACE:
     case this.keyCode.RETURN:
+      // Create simulated mouse event for consumption by ATs.
+      // The event handler handleClick does the housekeeping.
       try {
         clickEvent = new MouseEvent('click', {
           'view': window,
@@ -112,14 +114,12 @@ Menu.prototype.handleKeydown = function (event) {
       }
       catch(err) {
         if (document.createEvent) {
-          // DOM Level 2
+          // DOM Level 3 for IE 9+
           clickEvent = document.createEvent('MouseEvents');
           clickEvent.initEvent('click', true, true);
         }
       }
       tgt.dispatchEvent(clickEvent);
-      // Call to this.close was removed because it duplicates
-      // the same call made by the click handler.
       flag = true;
       break;
 
