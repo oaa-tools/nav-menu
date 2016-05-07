@@ -98,17 +98,33 @@ Menu.prototype.init = function () {
 
 Menu.prototype.handleKeydown = function (event) {
   var tgt = event.currentTarget,
-      flag = false;
+      flag = false, clickEvent;
 
   switch (event.keyCode) {
     case this.keyCode.SPACE:
     case this.keyCode.RETURN:
-      var clickEvent = new MouseEvent('click', {
-        'view': window,
-        'bubbles': true,
-        'cancelable': true
-      });
-      tgt.dispatchEvent(clickEvent);
+      try {
+        clickEvent = new MouseEvent('click', {
+          'view': window,
+          'bubbles': true,
+          'cancelable': true
+        });
+        tgt.dispatchEvent(clickEvent);
+      }
+      catch(err) {
+        if (document.createEvent) {
+          // DOM Level 2
+          clickEvent = document.createEvent('MouseEvents');
+          clickEvent.initMouseEvent('click', true, true, window, null, 0, 0, 0, 0, false, false, false, false, 0, null);
+          tgt.dispatchEvent(clickEvent);
+        }
+        else {
+          // IE8 and below
+          clickEvent = document.createEventObject();
+          clickEvent.relatedTarget = null;
+          tgt.fireEvent('onclick', clickEvent);
+        }
+      }
       // Call to this.close was removed because it duplicates
       // the same call made by the click handler.
       flag = true;
