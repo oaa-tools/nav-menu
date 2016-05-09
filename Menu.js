@@ -103,8 +103,8 @@ Menu.prototype.handleKeydown = function (event) {
   switch (event.keyCode) {
     case this.keyCode.SPACE:
     case this.keyCode.RETURN:
-      // Create simulated mouse event for consumption by ATs.
-      // The event handler handleClick does the housekeeping.
+      // Create simulated mouse event to mimic the behavior of ATs
+      // and let the event handler handleClick do the housekeeping.
       try {
         clickEvent = new MouseEvent('click', {
           'view': window,
